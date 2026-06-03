@@ -39,10 +39,45 @@ export function ProductForm({ initialData }: { initialData?: ProductData }) {
   const [ingredients, setIngredients] = useState<string[]>(initialData?.ingredients || []);
   const [newIngredient, setNewIngredient] = useState("");
 
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const { token } = useAuth();
   const router = useRouter();
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    setUploadError("");
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const res = await fetch("/api/admin/upload", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+
+      const data = await res.json();
+      if (res.ok && data.url) {
+        setImage(data.url);
+      } else {
+        setUploadError(data.error || "Tải ảnh lên thất bại");
+      }
+    } catch (err) {
+      console.error(err);
+      setUploadError("Không thể kết nối đến server upload");
+    } finally {
+      setUploading(false);
+    }
+  };
 
   // Auto-generate slug from name
   useEffect(() => {
@@ -292,15 +327,62 @@ export function ProductForm({ initialData }: { initialData?: ProductData }) {
             <h3 className="text-lg font-bold text-slate-900 border-b border-slate-100 pb-3">Hình ảnh & Nguyên liệu</h3>
 
             <div>
-              <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Ảnh sản phẩm (URL)</label>
-              <input
-                type="text"
-                required
-                value={image}
-                onChange={(e) => setImage(e.target.value)}
-                placeholder="https://images.unsplash.com/..."
-                className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all text-slate-800"
-              />
+              <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Ảnh sản phẩm</label>
+              
+              <div className="space-y-3">
+                {/* Image Preview */}
+                {image && (
+                  <div className="relative w-32 h-32 rounded-2xl overflow-hidden border border-slate-100 shadow-sm bg-slate-50">
+                    <img src={image} alt="Preview" className="w-full h-full object-cover" />
+                    <button
+                      type="button"
+                      onClick={() => setImage("")}
+                      className="absolute top-1.5 right-1.5 bg-red-500 text-white p-1.5 rounded-full hover:bg-red-600 transition shadow-sm"
+                      title="Xóa ảnh"
+                    >
+                      <Trash size={12} />
+                    </button>
+                  </div>
+                )}
+
+                {/* File Upload Selector */}
+                <div className="flex items-center gap-3">
+                  <label className="flex-1 cursor-pointer flex flex-col items-center justify-center border-2 border-dashed border-slate-200 hover:border-orange-300 rounded-2xl p-4 bg-slate-50 hover:bg-orange-50/5 transition-all text-slate-500">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      disabled={uploading}
+                      className="hidden"
+                    />
+                    {uploading ? (
+                      <div className="flex items-center gap-2 text-xs font-bold text-orange-500">
+                        <Loader size={16} className="animate-spin" />
+                        <span>Đang tải lên Cloudflare R2...</span>
+                      </div>
+                    ) : (
+                      <span className="text-xs font-bold text-orange-600">Chọn tệp ảnh từ thiết bị</span>
+                    )}
+                  </label>
+                </div>
+
+                {uploadError && (
+                  <p className="text-xs text-red-500 font-semibold">{uploadError}</p>
+                )}
+
+                {/* Manual Text URL fallback */}
+                <div className="pt-2 border-t border-slate-100">
+                  <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Hoặc nhập URL ảnh trực tiếp</label>
+                  <input
+                    type="text"
+                    required
+                    value={image}
+                    onChange={(e) => setImage(e.target.value)}
+                    placeholder="https://images.unsplash.com/..."
+                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all text-slate-800"
+                  />
+                </div>
+              </div>
             </div>
 
             {/* Ingredients Manager */}

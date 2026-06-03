@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useAuth } from "@/lib/auth-context";
 import { useRouter, usePathname } from "next/navigation";
-import { LogOut, Menu, X, FileText, Users, LayoutDashboard, ClipboardCheck, FolderKanban, FolderPlus } from "lucide-react";
+import { LogOut, Menu, X, FileText, Users, LayoutDashboard, ClipboardCheck, FolderKanban, FolderPlus, Globe } from "lucide-react";
 import { useState } from "react";
 
 export function AdminHeader() {
@@ -32,6 +32,7 @@ export function AdminHeader() {
           { href: "/admin/posts/review", label: "Bài chờ duyệt", icon: ClipboardCheck },
           { href: "/admin/categories", label: "Danh mục", icon: FolderKanban },
           { href: "/admin/products", label: "Sản phẩm", icon: FolderPlus },
+          { href: "/admin/pages", label: "Trang", icon: Globe },
         ]
       : []),
     ...(user?.role === "ADMIN" ? [{ href: "/admin/users", label: "Thành viên", icon: Users }] : []),

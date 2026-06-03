@@ -19,9 +19,170 @@ import {
   Link as LinkIcon,
   List,
   Type,
-  Loader
+  Loader,
+  Sparkles
 } from "lucide-react";
 import Link from "next/link";
+
+// Pre-defined writing templates for professional snack blog content
+const POST_TEMPLATES = [
+  {
+    id: "recipe",
+    name: "🍳 Công thức nấu ăn / Chế biến",
+    description: "Hướng dẫn làm các món ăn từ đồ ăn vặt Bà Tuyết, thời gian chuẩn bị, nguyên liệu và quy trình các bước chi tiết.",
+    content: `<h2>[Tên món ăn hấp dẫn]</h2>
+<p><em>Một mô tả ngắn khoảng 2-3 câu giới thiệu món ăn này ngon như thế nào và tại sao độc giả nên thử làm ngay hôm nay.</em></p>
+
+<div class="bg-orange-50 border-l-4 border-orange-500 p-4 my-6 rounded-r-2xl">
+  <p class="font-bold text-orange-900 my-0">⏱️ Thông tin chuẩn bị:</p>
+  <ul class="my-1 text-slate-750 text-sm">
+    <li><strong>Thời gian chuẩn bị:</strong> 15 phút</li>
+    <li><strong>Thời gian chế biến:</strong> 20 phút</li>
+    <li><strong>Khẩu phần:</strong> 2 - 3 người ăn</li>
+    <li><strong>Độ khó:</strong> Dễ</li>
+  </ul>
+</div>
+
+<h3>🛒 Nguyên liệu cần chuẩn bị</h3>
+<ul>
+  <li>Chân gà rút xương Bà Tuyết: 1 gói (500g)</li>
+  <li>Sả: 5 nhánh (thái lát mỏng)</li>
+  <li>Ớt chỉ thiên: 3 quả (băm nhỏ)</li>
+  <li>Quất (tắc): 5 quả (thái lát bỏ hạt)</li>
+  <li>Gia vị: Nước mắm, đường, giấm, muối</li>
+</ul>
+
+<h3>👩‍🍳 Quy trình thực hiện chi tiết</h3>
+<ol>
+  <li><strong>Bước 1 - Sơ chế nguyên liệu:</strong> Rửa sạch chân gà với muối và chanh, luộc sơ qua với sả trong 5 phút rồi vớt ra ngâm nước đá lạnh để chân gà giữ độ giòn sần sật.</li>
+  <li><strong>Bước 2 - Pha nước sốt trộn:</strong> Hòa tan 3 thìa nước mắm ngon, 2 thìa đường, 2 thìa giấm và 1 bát nước lọc. Đun sôi hỗn hợp này rồi để thật nguội.</li>
+  <li><strong>Bước 3 - Trộn và ngâm:</strong> Cho chân gà vào tô lớn, thêm sả, ớt, quất và đổ nước sốt vào ngập chân gà. Trộn đều và để vào ngăn mát tủ lạnh từ 2-3 tiếng cho ngấm vị.</li>
+</ol>
+
+<div class="my-6">
+  <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=1200&q=80" alt="Thành phẩm món ăn" class="w-full rounded-2xl shadow-sm" />
+</div>
+
+<h3>✨ Mẹo nhỏ từ Bà Tuyết</h3>
+<p>Hãy ngâm chân gà vào nước đá lạnh tối thiểu 10 phút sau khi luộc. Đây là bí quyết giúp chân gà rút xương giòn dai chuẩn vị nhà hàng!</p>`
+  },
+  {
+    id: "product_review",
+    name: "⭐ Đánh giá / Review món ăn vặt",
+    description: "Đánh giá chân thực về bao bì, hương vị thực tế, độ cay nồng, ưu điểm và nhược điểm của sản phẩm.",
+    content: `<h2>Review Chi Tiết: [Tên sản phẩm ăn vặt]</h2>
+<p><em>Ăn vặt là niềm đam mê bất tận! Hôm nay mình sẽ review chân thực nhất về siêu phẩm đang làm mưa làm gió cộng đồng mạng thời gian qua: [Tên sản phẩm]. Hãy xem có đáng tiền mua không nhé!</em></p>
+
+<h3>📦 Thiết kế bao bì & Quy cách đóng gói</h3>
+<p>Sản phẩm được đóng gói cực kỳ chắc chắn trong bao bì túi zip dập kín. Mặt trước in hình ảnh minh họa chân thực, đầy đủ thông tin xuất xứ rõ ràng và chứng nhận an toàn thực phẩm. Trọng lượng tịnh của sản phẩm là [Ví dụ: 150g], rất vừa vặn cho một lần ăn vặt cùng bạn bè.</p>
+
+<h3>🌶️ Cảm nhận hương vị & Độ cay</h3>
+<ul>
+  <li><strong>Hương vị đặc trưng:</strong> Khi mở túi ra, mùi thơm nồng của sả và ớt lập tức tỏa ra. Khi cắn miếng đầu tiên, bạn sẽ cảm nhận vị ngọt thanh tự nhiên trộn lẫn với gia vị cay cay mặn mặn đậm đà.</li>
+  <li><strong>Độ cay:</strong> Ở mức [2/5 - Cay nhẹ / 4/5 - Siêu cay dã man]. Những ai không ăn được cay nhiều vẫn có thể thưởng thức thoải mái.</li>
+  <li><strong>Độ giòn:</strong> Miếng ăn vặt [giòn dai, sần sật] rất kích thích vị giác.</li>
+</ul>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-6">
+  <div class="bg-green-50 border-l-4 border-green-500 p-4 rounded-r-2xl">
+    <p class="font-bold text-green-900 my-0">👍 Ưu điểm nổi bật:</p>
+    <ul class="text-xs text-slate-750 my-1">
+      <li>Nguyên liệu sạch sẽ, rõ nguồn gốc</li>
+      <li>Gia vị thấm đều, chuẩn công thức gia truyền</li>
+      <li>Giá cả bình dân phù hợp học sinh sinh viên</li>
+    </ul>
+  </div>
+  <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-r-2xl">
+    <p class="font-bold text-red-900 my-0">👎 Điểm cần lưu ý:</p>
+    <ul class="text-xs text-slate-750 my-1">
+      <li>Khá cay, nên chuẩn bị sẵn nước uống kèm</li>
+      <li>Nên ăn ngay sau khi mở túi zip để giữ độ ngon tối đa</li>
+    </ul>
+  </div>
+</div>
+
+<h3>🎯 Kết luận & Điểm số đánh giá</h3>
+<p>Nhìn chung, đây là món ăn vặt cực kỳ đáng thử, thích hợp cho các buổi cày phim hay ngồi tám chuyện. Mình xin đánh giá điểm số của siêu phẩm này là <strong>9/10</strong>!</p>
+<p><a href="/san-pham" class="text-orange-500 font-bold underline">👉 Đặt mua sản phẩm chính hãng trực tiếp tại đây để nhận khuyến mãi!</a></p>`
+  },
+  {
+    id: "promotion",
+    name: "🎁 Tin khuyến mãi / Sự kiện ưu đãi",
+    description: "Thông báo chương trình tặng quà, giảm giá, combo giá hời theo mốc thời gian áp dụng.",
+    content: `<h2>BÙNG NỔ ƯU ĐÃI: [Tên chương trình khuyến mãi]</h2>
+<p><strong>Cơ hội vàng cho các tín đồ ăn vặt!</strong> Ăn Cùng Bà Tuyết xin gửi tới quý khách hàng chương trình khuyến mãi lớn nhất năm với hàng ngàn phần quà và ưu đãi giảm giá sập sàn dưới đây.</p>
+
+<div class="bg-amber-500 text-slate-950 font-black text-center p-3 rounded-xl my-6">
+  🔥 KHUYẾN MÃI ÁP DỤNG TỪ [Ngày bắt đầu] ĐẾN HẾT NGÀY [Ngày kết thúc] 🔥
+</div>
+
+<h3>🎉 Chi tiết các chương trình khuyến mãi cực khủng</h3>
+<table class="w-full text-left text-sm border-collapse my-6">
+  <thead>
+    <tr class="bg-slate-100 font-bold">
+      <th class="border p-2">Chương trình</th>
+      <th class="border p-2">Nội dung ưu đãi</th>
+      <th class="border p-2">Sản phẩm áp dụng</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="border p-2"><strong>MUA 2 TẶNG 1</strong></td>
+      <td class="border p-2">Mua 2 gói chân gà tặng ngay 1 gói tăm cay</td>
+      <td class="border p-2">Chân gà rút xương</td>
+    </tr>
+    <tr>
+      <td class="border p-2"><strong>SIÊU COMBO</strong></td>
+      <td class="border p-2">Combo Ăn Sập Tiệm giảm giá trực tiếp 20%</td>
+      <td class="border p-2">Toàn bộ combo của shop</td>
+    </tr>
+    <tr>
+      <td class="border p-2"><strong>FREESHIP</strong></td>
+      <td class="border p-2">Miễn phí vận chuyển toàn quốc cho đơn hàng từ 199k</td>
+      <td class="border p-2">Áp dụng cho mọi đơn hàng</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>📝 Hướng dẫn cách thức nhận ưu đãi</h3>
+<ol>
+  <li>Truy cập vào danh sách sản phẩm hoặc liên hệ hotline để đặt hàng.</li>
+  <li>Lựa chọn các sản phẩm nằm trong chương trình khuyến mãi nêu trên.</li>
+  <li>Hệ thống sẽ tự động trừ tiền giảm giá hoặc nhân viên sẽ xác nhận quà tặng kèm khi gọi điện chốt đơn.</li>
+</ol>
+
+<p>Số lượng quà tặng có hạn, chương trình có thể kết thúc sớm hơn dự kiến. Các tín đồ ăn vặt nhanh tay rủ bạn bè đặt mua ngay hôm nay để không bỏ lỡ đại tiệc ưu đãi này nhé!</p>
+<p><a href="/san-pham" class="text-orange-500 font-bold underline">🛒 Nhấp vào đây để xem các sản phẩm và mua ngay!</a></p>`
+  },
+  {
+    id: "handbook",
+    name: "📚 Cẩm nang / Chia sẻ kinh nghiệm",
+    description: "Chia sẻ kiến thức bổ ích về ẩm thực, vệ sinh an toàn thực phẩm, mẹo bảo quản đồ ăn sạch.",
+    content: `<h2>Cẩm Nang Ăn Vặt: [Tên bài chia sẻ kiến thức]</h2>
+<p><em>Chào các bạn độc giả yêu quý, đồ ăn vặt là một phần không thể thiếu trong cuộc sống bận rộn hiện đại. Tuy nhiên, ăn vặt thế nào cho thông minh, an toàn sức khỏe thì không phải ai cũng biết. Hôm nay hãy cùng Bà Tuyết tìm hiểu vấn đề này nhé!</em></p>
+
+<h3>1. [Nội dung chia sẻ số 1]</h3>
+<p>Nhập đoạn văn phân tích chi tiết tại đây. Sử dụng ngôn từ gần gũi, chia sẻ các kinh nghiệm thực tế của bạn hoặc thương hiệu để tạo dựng niềm tin vững chắc đối với độc giả.</p>
+
+<h3>2. [Nội dung chia sẻ số 2]</h3>
+<p>Phân tích các luận điểm tiếp theo. Bạn nên chèn các gạch đầu dòng để người đọc dễ theo dõi:</p>
+<ul>
+  <li><strong>Ý thứ nhất:</strong> Chi tiết phân tích...</li>
+  <li><strong>Ý thứ hai:</strong> Chi tiết phân tích...</li>
+  <li><strong>Ý thứ ba:</strong> Chi tiết phân tích...</li>
+</ul>
+
+<div class="bg-blue-50 border-l-4 border-blue-500 p-4 my-6 rounded-r-2xl">
+  <p class="font-bold text-blue-900 my-0">💡 Bạn có biết?</p>
+  <p class="text-slate-700 text-xs my-1">Nhập một thông tin thú vị hoặc số liệu thống kê liên quan để bài viết thêm phần chuyên nghiệp và tăng sức thuyết phục.</p>
+</div>
+
+<h3>3. [Nội dung chia sẻ số 3]</h3>
+<p>Tóm tắt các giải pháp hữu ích, kết luận lại vấn đề và đưa ra lời khuyên dành cho người tiêu dùng thông thái.</p>
+
+<p>Hy vọng bài chia sẻ cẩm nang này sẽ giúp ích cho các bạn trong việc chọn lựa những món ăn vặt an toàn, bổ dưỡng cho cả gia đình. Nếu thấy thông tin bổ ích, đừng ngần ngại chia sẻ cho bạn bè cùng biết nhé!</p>`
+  }
+];
 
 interface Category {
   id: string;
@@ -54,6 +215,16 @@ export function CreatePostForm({ postId }: { postId?: string }) {
   const [seoKeywords, setSeoKeywords] = useState("");
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const applyTemplate = (tmpl: typeof POST_TEMPLATES[0]) => {
+    if (content.trim()) {
+      const confirmOverwrite = confirm(
+        `Bạn có chắc chắn muốn áp dụng mẫu "${tmpl.name}"? Nội dung hiện tại trong khung soạn thảo sẽ bị ghi đè hoàn toàn.`
+      );
+      if (!confirmOverwrite) return;
+    }
+    setContent(tmpl.content);
+  };
 
   useEffect(() => {
     fetchCategories();
@@ -281,6 +452,33 @@ export function CreatePostForm({ postId }: { postId?: string }) {
                 className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all text-sm text-slate-700"
               />
             </div>
+
+            {/* Quick Content Templates */}
+            {!postId && (
+              <div className="bg-orange-50/50 border border-orange-100 p-5 rounded-2xl space-y-3">
+                <div className="flex items-center gap-1.5 text-slate-800">
+                  <Sparkles className="text-orange-500" size={16} />
+                  <span className="text-xs font-bold text-slate-900">Chọn mẫu soạn nhanh bài viết (Blog Templates):</span>
+                </div>
+                <div className="grid sm:grid-cols-2 gap-3">
+                  {POST_TEMPLATES.map((tmpl) => (
+                    <button
+                      key={tmpl.id}
+                      type="button"
+                      onClick={() => applyTemplate(tmpl)}
+                      className="text-left p-3.5 bg-white border border-slate-100 rounded-2xl hover:border-orange-500 hover:bg-orange-50/10 hover:shadow-sm transition-all select-none group cursor-pointer"
+                    >
+                      <div className="text-xs font-bold text-slate-900 group-hover:text-orange-650">
+                        {tmpl.name}
+                      </div>
+                      <div className="text-[10px] text-slate-400 mt-1.5 leading-relaxed font-semibold">
+                        {tmpl.description}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Rich Editor / Markdown area */}
             <div className="space-y-3">

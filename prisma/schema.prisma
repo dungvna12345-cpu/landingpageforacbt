@@ -136,3 +136,14 @@ model Product {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 }
+
+model Page {
+  id        String   @id @default(cuid())
+  title     String
+  slug      String   @unique
+  content   Json
+  status    String   @default("DRAFT") // DRAFT, PUBLISHED
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
